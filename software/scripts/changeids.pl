@@ -5,12 +5,12 @@ if (!$ARGV[0]){
         $name=<STDIN>;
         chomp $name;
 }else{
-        $name=".temp/",$ARGV[0];
+        $name=$ARGV[0];
         chomp $name;
 }
 ($id,$ext)=split(/\./,$name);
                 open (codigos,"$name") || die "Error: problem opening fasta file\n";
-                open (results,">$id"."ids_out.fasta");
+                open (results,">ids_out.fasta");
 
 
                 $count=0;
