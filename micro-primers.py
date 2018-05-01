@@ -51,11 +51,11 @@ def length_calc():
     os.system("perl software/scripts/extraelength.pl .temp/ids_out.fasta")
 
 trimmomatic()
-cutadapt()       #A FUNCIONAR
+cutadapt()       
 flash()
-grep()            #A FUNCIONAR
-ids()             #Script não aceita o path na pasta .temp/
-misa()            #Mensagem de erro
+grep()            
+ids()             
+misa()            
 length_calc()
 
 os.system("echo 'Done!'")
