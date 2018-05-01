@@ -8,12 +8,12 @@ if (!$ARGV[0]){
 	$name=$ARGV[0];
 	chomp $name;
 }
-		
+
 		open (codigos,"$name") || die "Error: problem opening fasta file\n";
-		open (results,">$name".".length");
+		open (results,">.temp/length_calc_out.fasta");
 	$length=0;
 	while (<codigos>){
-			chomp $_; 
+			chomp $_;
 			if ($_=~/^\>/){
 				$length=length($seq);
 				print results "$id\t$length\n";
@@ -25,7 +25,7 @@ if (!$ARGV[0]){
 				#}
 				($a1,$id)=split(/\>/,$_);
 			}else{
-		
+
 				$seq.=$_;
 				}
 		}

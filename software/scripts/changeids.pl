@@ -10,7 +10,7 @@ if (!$ARGV[0]){
 }
 ($id,$ext)=split(/\./,$name);
                 open (codigos,"$name") || die "Error: problem opening fasta file\n";
-                open (results,">ids_out.fasta");
+                open (results,">.temp/ids_out.fasta");
 
 
                 $count=0;
@@ -24,4 +24,3 @@ if (!$ARGV[0]){
                                 print results "$_\n";
                                 }
                 }
-
