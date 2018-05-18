@@ -13,12 +13,12 @@ if ((!$ARGV[0]) && (!$ARGV[1])){
 	$list=$ARGV[1];
 	chomp $list;
 }
-		
+
 		open (fasta,"$name") || die "Error: problem opening fasta file\n";
-		open (results,">$lista"."noSSR.fasta");
-	
+		open (results,">.temp/split_out.fasta");
+
 	while (<fasta>){
-			chomp $_; 
+			chomp $_;
 			if ($_=~/^\>/){
 			($simbol,$ID)=split(/\>/,$_);
 			}else{

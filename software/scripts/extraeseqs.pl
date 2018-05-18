@@ -1,5 +1,4 @@
 #!/usr/local/bin/perl
-####Programa para obtener la longitud de cada una de las secuencias de un fichero fasta;
 if ((!$ARGV[0]) && (!$ARGV[1])){
 	print "introduce name of fasta file: ";
 	$name=<STDIN>;
@@ -13,12 +12,12 @@ if ((!$ARGV[0]) && (!$ARGV[1])){
 	$list=$ARGV[1];
 	chomp $list;
 }
-		
+
 		open (fasta,"$name") || die "Error: problem opening fasta file\n";
-		open (results,">$lista"."noSSR.fasta");
-	
+		open (results,">.temp/pseudo_out.fasta");
+
 	while (<fasta>){
-			chomp $_; 
+			chomp $_;
 			if ($_=~/^\>/){
 			($simbol,$ID)=split(/\>/,$_);
 			}else{
@@ -32,6 +31,6 @@ while (<table>){
 	chomp $_;
 	$identificador=$_;
 
-print results ">$identificador\n$fasta{$identificador}\n";
+print results "SEQUENCE_ID=$identificador\nSEQUENCE_TEMPLATE=$fasta{$identificador}\n=\n";
 
 }

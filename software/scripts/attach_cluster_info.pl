@@ -24,7 +24,7 @@ while (<codigos>){
 close (codigos);
 
 open (fichero,"$lista") || die "Error: problem opening $name".".txt\n";
-open (results,">$lista"."_annotation.txt");
+open (results,">.temp/cluster_info_out.txt");
 while (<fichero>){
     chomp $_;
 	($name,@resto)=split(/\,/,$_);

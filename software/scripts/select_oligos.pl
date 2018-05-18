@@ -8,9 +8,9 @@ print "Introduce the name of your selected reads with start and end included: ";
     $list=<STDIN>;
     chomp $list;
 }else{
-    $list=$ARGV[0];
+    $output=$ARGV[0];
     chomp $output;
-    $ref=$ARGV[1];
+    $list=$ARGV[1];
     chomp $list;
 }
 open (file, "$list")|| die "Error: problem opening $list\n";
@@ -20,7 +20,7 @@ while (<file>){
 	$ref{$id}="$motif $start $end";
 }
 open (output, "$output") || die "Error: problem opening $output\n";
-open (results, ">$output"."_processed.txt");
+open (results, ">final_primers.txt");
 
 while (<output>){
 	chomp $_;

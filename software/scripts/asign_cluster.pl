@@ -9,7 +9,7 @@ if (!$ARGV[0]){
         chomp $name;
 }
 open (file,"$name") || die "Error: problem opening cluster file\n";
-open (results, ">list.clusters.txt");
+open (results, ">.temp/clusters_out.txt");
 
 while (<file>){
 	if ($_=~/^\>/){
@@ -42,7 +42,7 @@ for ($i=0;$i<=$total;$i++){
     #            }elsif((!$kk{$num}{pool})&&($kk{$num}{sample6})){
      #                   print results "$info{$num}{$i}\t$real\t1\n";
       #          }
-       
+
  }
 close (results);
 #open (new, "list.clusters.txt");
