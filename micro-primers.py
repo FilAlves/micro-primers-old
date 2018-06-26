@@ -43,7 +43,7 @@ def grep():
 
 #Change id's
 def ids():
-    os.system("echo 'Chaging ids...'")
+    os.system("echo 'Changing ids...'")
     os.system("perl software/scripts/changeids.pl .temp/grep_out.fasta")
 
 #Search Microssatelites
@@ -56,15 +56,27 @@ def length_calc():
     os.system("echo 'Calculating sequences lengths...'")
     os.system("perl software/scripts/extraelength.pl .temp/ids_out.fasta")
 
+#Adds length to end of the sequences to misa output
+def length_add():
+    os.system("echo 'Adding length to misa output...'")
+    os.system("python3 software/scripts/length_merger.py .temp/misa_out.misa "
+              ".temp/length_calc_out.fasta .temp/length_add_out.misa")
+
+#Selection of microssatelites with enough space for primer
+def good_micros():
+    os.system("echo 'Selecting good microsatellites...'")
+    os.system("python3 software/scripts/csv_picker.py .temp/length_add_out.misa "
+              ".temp/good_micros_out.fasta .temp/good_micros_table_out.misa")
+
 #Extraction of the microsatellite sequence from allignement of fragments with flanking regions
 def splitSSR():
     os.system("echo 'splitSSR working...'")
-    os.system("perl software/scripts/splitSSR.pl .temp/ids_out.fasta replacement/micros_good.txt")
+    os.system("perl software/scripts/splitSSR.pl .temp/ids_out.fasta .temp/good_micros_out.fasta")
 
 #Removal of Redundacy
 def cdhit():
     os.system("echo 'CD-HIT working...'")
-    os.system("software/cdhit/cd-hit-est -o .temp/cdhit_out.txt -i replacement/replacement.txtnoSSR.fasta -c 0.90 -n 10 -T 10 > logs/cdhit_log.txt")
+    os.system("software/cdhit/cd-hit-est -o .temp/cdhit_out.txt -i .temp/split_out.fasta -c 0.90 -n 10 -T 10 > logs/cdhit_log.txt")
 
 #Cluster assignement
 def cluster():
@@ -74,23 +86,29 @@ def cluster():
 #Adding cluster information to Microssatelites table
 def cluster_info():
     os.system("echo 'Adding information to the table of microsatellites...'")
-    os.system("perl software/scripts/attach_cluster_info.pl .temp/misa_out.misa clusters_out.txt") #.temp/clusters_out.txt")
+    os.system("perl software/scripts/attach_cluster_info.pl .temp/good_micros_table_out.misa .temp/clusters_out.txt")
+
+# Selecting one sequence per cluster
+def selected_micros():
+    os.system("echo 'Selecting one sequence per cluster...'")
+    os.system("python3 software/scripts/selected_micros.py .temp/cluster_info_out.txt "
+    ".temp/selected_micros_seqs.txt .temp/selected_micros_tabs.txt")
 
 #Creating input file for Primer3
 def create_pseudofasta():
     os.system("echo 'Creating Primer3 input file...'")
-    os.system("perl software/scripts/extraeseqs.pl replacement/bugios_good_idchanged.fasta replacement/micros_selected.txt")
+    os.system("perl software/scripts/extraeseqs.pl .temp/ids_out.fasta .temp/selected_micros_seqs.txt")
 
 #Primer design and creation
 def primer3():
     os.system("echo 'Creating Primers...'")
-    os.system("software/primer3/src/./primer3_core -default_version=2 -p3_settings_file=software/primer3/CTM_settings_long.txt "
+    os.system("software/primer3/src/./primer3_core -default_version=2 -p3_settings_file=CTM_settings_long.txt "
               ".temp/pseudo_out.fasta -output=.temp/micros_selected_long.primers")
 
 #Selection of primers following laboratory criteria
 def select():
     os.system("echo 'Selecting best primers...'")
-    os.system("perl software/scripts/select_oligos.pl .temp/micros_selected_long.primers replacement/tab_selected.txt > logs/select_log.txt")
+    os.system("perl software/scripts/select_oligos.pl .temp/micros_selected_long.primers .temp/selected_micros_tabs.txt > logs/select_log.txt")
 
 #Removal of .temp directory
 def junk():
@@ -104,14 +122,17 @@ grep()
 ids()
 misa()
 length_calc()
+length_add()
+good_micros()
 splitSSR()
 cdhit()
 cluster()
 cluster_info()
+selected_micros()
 create_pseudofasta()
 primer3()
 select()
-junk()
+#junk()
 
 os.system("echo 'Done!'")
 
