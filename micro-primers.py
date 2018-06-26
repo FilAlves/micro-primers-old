@@ -132,16 +132,10 @@ selected_micros()
 create_pseudofasta()
 primer3()
 select()
-#junk()
+junk()
 
 os.system("echo 'Done!'")
 
 
 #É preciso fazer make do CD-HIT, Primer3 e flash
 
-#Replacement Files:
-#bugios_good_idchanged.fasta
-#micros_good.txt
-#micros_selected.txt
-#replacement.txtnoSSR.fasta
-#tab_selected.txt
