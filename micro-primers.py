@@ -1,4 +1,8 @@
 import os
+from software.scripts import picker, config
+
+#Reading settings
+settings = config.config("config.txt")
 
 #Creation of hidden temp file
 if os.path.isdir(".temp/") == False:
@@ -7,12 +11,8 @@ if os.path.isdir(".temp/") == False:
 if os.path.isdir("logs/") == False:
     os.system("mkdir logs")
 
-#Input file with Sequences to be processed and cutadapt input sequences
-file = open("input_text.txt", "r")
-lines = file.read().splitlines()
-
 #Sequences Triming of Sequencer adapters
-def trimmomatic():
+def trimmomatic(R1, R2):
     os.system("echo 'Trimmomatic working...'")
     os.system(
         "java -jar software/Trimmomatic-0.36/trimmomatic-0.36.jar PE -phred33 "
@@ -21,14 +21,14 @@ def trimmomatic():
         ".temp/trim_out_trimmed_R2.fastq .temp/trim_out_unpaired_R2.fastq "
         "ILLUMINACLIP:/home/filalves/projecto/software/Trimmomatic-0.36/adapters/TruSeq2-PE.fa:2:30:10 "
         "LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 2> logs/trim_log.txt"
-        %(lines[0], lines[1])
+        %(R1, R2)
         )
 
 #Adapters removal (specifics from technology)
-def cutadapt():
+def cutadapt(a, g):
     os.system("echo 'Cutadapt working...'")
-    os.system("cutadapt -a %s -g %s -o .temp/cut_out_nolink_R1.fastq .temp/trim_out_trimmed_R1.fastq > logs/cut_log_r1.txt" %(lines[2], lines[3]) )
-    os.system("cutadapt -a %s -g %s -o .temp/cut_out_nolink_R2.fastq .temp/trim_out_trimmed_R2.fastq > logs/cut_log_r2.txt" %(lines[2], lines[3]) )
+    os.system("cutadapt -a %s -g %s -o .temp/cut_out_nolink_R1.fastq .temp/trim_out_trimmed_R1.fastq > logs/cut_log_r1.txt" %(a, g))
+    os.system("cutadapt -a %s -g %s -o .temp/cut_out_nolink_R2.fastq .temp/trim_out_trimmed_R2.fastq > logs/cut_log_r2.txt" %(a, g))
 
 # Fusion of R1 and R2 files
 def flash():
@@ -59,14 +59,14 @@ def length_calc():
 #Adds length to end of the sequences to misa output
 def length_add():
     os.system("echo 'Adding length to misa output...'")
-    os.system("python3 software/scripts/length_merger.py .temp/misa_out.misa "
-              ".temp/length_calc_out.fasta .temp/length_add_out.misa")
+    picker.length_merger(".temp/misa_out.misa", ".temp/length_calc_out.fasta", ".temp/length_add_out.misa")
+
 
 #Selection of microssatelites with enough space for primer
-def good_micros():
+def good_micros(dist, rep, exclude):
     os.system("echo 'Selecting good microsatellites...'")
-    os.system("python3 software/scripts/csv_picker.py .temp/length_add_out.misa "
-              ".temp/good_micros_out.fasta .temp/good_micros_table_out.misa")
+    picker.csv_picker(".temp/length_add_out.misa", ".temp/good_micros_out.fasta",
+                ".temp/good_micros_table_out.misa",dist, rep, exclude)
 
 #Extraction of the microsatellite sequence from allignement of fragments with flanking regions
 def splitSSR():
@@ -91,8 +91,7 @@ def cluster_info():
 # Selecting one sequence per cluster
 def selected_micros():
     os.system("echo 'Selecting one sequence per cluster...'")
-    os.system("python3 software/scripts/selected_micros.py .temp/cluster_info_out.txt "
-    ".temp/selected_micros_seqs.txt .temp/selected_micros_tabs.txt")
+    picker.selected_micros(".temp/cluster_info_out.txt", ".temp/selected_micros_seqs.txt", ".temp/selected_micros_tabs.txt")
 
 #Creating input file for Primer3
 def create_pseudofasta():
@@ -115,15 +114,15 @@ def junk():
     os.system("rm -r .temp/")
 
 #Pipeline
-trimmomatic()
-cutadapt()
+trimmomatic(settings[0], settings[1])
+cutadapt(settings[2], settings[3])
 flash()
 grep()
 ids()
 misa()
 length_calc()
 length_add()
-good_micros()
+good_micros(int(settings[4]), int(settings[5]), settings[6])
 splitSSR()
 cdhit()
 cluster()
@@ -132,10 +131,9 @@ selected_micros()
 create_pseudofasta()
 primer3()
 select()
-junk()
+#junk()"""
 
 os.system("echo 'Done!'")
 
 
 #É preciso fazer make do CD-HIT, Primer3 e flash
-
