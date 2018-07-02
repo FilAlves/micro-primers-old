@@ -1,4 +1,8 @@
 import os
+
+#Create empty file for importing python scripts
+os.system("touch software/scripts/__init__.py")
+
 from software.scripts import picker, config
 
 #Reading settings
