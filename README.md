@@ -10,6 +10,9 @@ For any questions please send an email to filipealvesbio@gmail.com
 Python3;
 build-essencial;
 perl;
+cutadapt (it can be installed using "sudo apt install cutadapt");
+java;
+A bit of pacience and happiness;
 
 
 
@@ -22,4 +25,6 @@ perl;
 5. Rename unziped primer3 file to "primer3"
 6. usig the terminal, "cd primer3/src" and "make all"
 -If an error occurs while compiling replace line 59 with "CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES_ -fpermissive" 
-
+7. Go to cdhit folder and "make" it. 
+8. "make" Flash-1.2.11
+9. Enjoy life!
