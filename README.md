@@ -12,6 +12,7 @@ build-essencial;
 perl;
 cutadapt (it can be installed using "sudo apt install cutadapt");
 java;
+zlib;
 A bit of pacience and happiness;
 
 
