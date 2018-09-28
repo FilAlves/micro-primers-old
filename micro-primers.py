@@ -3,7 +3,7 @@ import os
 #Create empty file for importing python scripts
 os.system("touch software/scripts/__init__.py")
 
-from software.scripts import picker, config
+from software.scripts import picker, config, ids
 
 #Reading settings
 settings = config.config("config.txt")
@@ -45,26 +45,22 @@ def grep():
     os.system("echo 'Selecting sequences with restriction enzime patterns...'")
     os.system("grep -B1 '^GATC\(\w*\)GATC$' .temp/flash_out.extendedFrags.fastq | sed 's/^@/>/' | perl -pe 's/--\n//g' > .temp/grep_out.fasta")
 
-#Change id's
-def ids():
+#Change id's and Length Calculation for later selection of valid microsatellites
+def ids_and_len():
     os.system("echo 'Changing ids...'")
-    os.system("perl software/scripts/changeids.pl .temp/grep_out.fasta")
+    os.system("echo 'Calculating sequences lengths...'")
+    ids.change_ids_and_calc_len(".temp/grep_out.fasta", ".temp/ids_out.fasta", ".temp/length_calc_out.fasta")
+    #os.system("perl software/scripts/changeids.pl .temp/grep_out.fasta")
 
 #Search Microssatelites
 def misa():
     os.system("echo 'Misa working...'")
     os.system("perl software/scripts/misa.pl .temp/ids_out.fasta 2> logs/misa_log.txt")
 
-#Length Calculation for later selection of valid microsatellites
-def length_calc():
-    os.system("echo 'Calculating sequences lengths...'")
-    os.system("perl software/scripts/extraelength.pl .temp/ids_out.fasta")
-
 #Adds length to end of the sequences to misa output
 def length_add():
     os.system("echo 'Adding length to misa output...'")
     picker.length_merger(".temp/misa_out.misa", ".temp/length_calc_out.fasta", ".temp/length_add_out.misa")
-
 
 #Selection of microssatelites with enough space for primer
 def good_micros(dist, rep, exclude):
@@ -75,7 +71,8 @@ def good_micros(dist, rep, exclude):
 #Extraction of the microsatellite sequence from allignement of fragments with flanking regions
 def splitSSR():
     os.system("echo 'splitSSR working...'")
-    os.system("perl software/scripts/splitSSR.pl .temp/ids_out.fasta .temp/good_micros_out.fasta")
+    ids.split(".temp/good_micros_out.fasta", ".temp/ids_out.fasta", ".temp/split_out.fasta")
+    #os.system("perl software/scripts/splitSSR.pl .temp/ids_out.fasta .temp/good_micros_out.fasta")
 
 #Removal of Redundacy
 def cdhit():
@@ -122,9 +119,8 @@ trimmomatic(settings[0], settings[1])
 cutadapt(settings[2], settings[3])
 flash()
 grep()
-ids()
+ids_and_len()
 misa()
-length_calc()
 length_add()
 good_micros(int(settings[4]), int(settings[5]), settings[6])
 splitSSR()
