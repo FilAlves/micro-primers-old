@@ -65,7 +65,7 @@ def split(rf1, rf2, of1):
     readfile2 = open(rf2, "r")
     outfile1 = open(of1, "w")
 
-    #Criation Dictionary with ID, start and end of SSR
+    #Criating Dictionary containing ID, start and end of SSR
     dic_micros = {}
 
     for line in readfile1:
@@ -93,13 +93,48 @@ def split(rf1, rf2, of1):
             outfile1.write(selected_line[0])
             outfile1.write(nextline)
 
+
+def cluster(rf1, of1):
+    readfile1 = open(rf1, "r")
+    outfile1 = open(of1, "w")
+
+    current_cluster = ""
+
+    #Creating dictionary to save each sequence of each cluster
+    dic_cluster = {}
+
+    for line in readfile1:
+
+        #Selecting cluster ID
+        if ">" in line[0]:
+            selected_line = line.split()
+            current_cluster = selected_line[1]
+
+            #Creating cluster entry on the dictionary
+            dic_cluster[current_cluster] = []
+
+        else:
+            #Replacing "_" for ">"" for easy selection of sequence ID
+            line = line.replace("_", ">")
+            selected_line = line.split(">")
+
+            #Adding sequence ID to corresponding cluster on the dictionary
+            dic_cluster[current_cluster].append(selected_line[1])
+
+
+    for key, value in dic_cluster.items():
+        for x in value:
+            #Defining cluster size
+            size_cluster = len(dic_cluster[key])
+            outfile1.write(str(x) + "\t" + str(key) + "\t" + str(size_cluster) + "\n")
+
         #StopIteneration()
     #for keys,values in dic_micros.items():
         #print (values)
 
 #len_add(".temp/length_calc_out.fasta", ".temp/misa_out.misa", ".temp/length_add_out.misa")
-split(".temp/good_micros_out.fasta", ".temp/ids_out.fasta", ".temp/split_out.fasta" )
-
+#split(".temp/good_micros_out.fasta", ".temp/ids_out.fasta", ".temp/split_out.fasta" )
+#cluster(".temp/cdhit_out.txt.clstr", ".temp/teste.txt")
 
 
 
