@@ -3,7 +3,7 @@ import os
 #Create empty file for importing python scripts
 os.system("touch software/scripts/__init__.py")
 
-from software.scripts import picker, config, ids
+from software.scripts import picker, config, ids, order
 
 #Reading settings
 settings = config.config("config.txt")
@@ -82,12 +82,12 @@ def cdhit():
 #Cluster assignement
 def cluster():
     os.system("echo 'Calculating number of sequences for each cluster...'")
-    os.system("perl software/scripts/asign_cluster.pl .temp/cdhit_out.txt.clstr")
+    ids.cluster(".temp/cdhit_out.txt.clstr", ".temp/clusters_out.txt")
 
 #Adding cluster information to Microssatelites table
 def cluster_info():
     os.system("echo 'Adding information to the table of microsatellites...'")
-    os.system("perl software/scripts/attach_cluster_info.pl .temp/good_micros_table_out.misa .temp/clusters_out.txt")
+    order.order(".temp/clusters_out.txt", ".temp/good_micros_table_out.misa", ".temp/cluster_info_out.txt")
 
 # Selecting one sequence per cluster
 def selected_micros():
@@ -97,7 +97,7 @@ def selected_micros():
 #Creating input file for Primer3
 def create_pseudofasta():
     os.system("echo 'Creating Primer3 input file...'")
-    os.system("perl software/scripts/extraeseqs.pl .temp/ids_out.fasta .temp/selected_micros_seqs.txt")
+    order.template(".temp/selected_micros_seqs.txt", ".temp/ids_out.fasta", ".temp/pseudo_out.fasta")
 
 #Primer design and creation
 def primer3():
